@@ -23,11 +23,12 @@ class VigenereCipheringMachine {
   constructor(reverse = true) {
     this.reverse = reverse;
   };
+
   encrypt(message = null, key = null) {
     if (!message || !key) throw new Error(`Incorrect arguments!`);
 
     let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
+    let result = [];
 
     key = key.toUpperCase();
     message = message.toUpperCase();
@@ -42,42 +43,43 @@ class VigenereCipheringMachine {
 
       if (symM.match(/[A-Z]/gm)) {
         let addr = ((abc.length + abc.search(symM) + abc.search(symK)) % abc.length);
-        result += abc[addr % abc.length];
+        result.push(abc[addr % abc.length]);
       } else {
-        result += symM;
+        result.push(symM);
         key = key.slice(0, i) + symM + key.slice(i);
       }
     }
 
-    return this.reverse ? result : result.split('').reverse().join('');
+    return this.reverse ? result.join('') : result.reverse().join('');
   };
+
   decrypt(message = null, key = null) {
-      if (!message || !key) throw new Error(`Incorrect arguments!`);
-  
-      let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let result = '';
-  
-      key = key.toUpperCase();
-      message = message.toUpperCase();
-  
-      while (key.length <= message.length) {
-        key += key;
-      };
-  
-      for (let i = 0; i < message.length; i++) {
-        let symM = message[i];
-        let symK = key[i];
-  
-        if (symM.match(/[A-Z]/gm)) {
-          let addr = ((abc.length + abc.search(symM) - abc.search(symK)) % abc.length);
-          result += abc[addr % abc.length];
-        } else {
-          result += symM;
-          key = key.slice(0, i) + symM + key.slice(i);
-        }
+    if (!message || !key) throw new Error(`Incorrect arguments!`);
+
+    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = [];
+
+    key = key.toUpperCase();
+    message = message.toUpperCase();
+
+    while (key.length <= message.length) {
+      key += key;
+    };
+
+    for (let i = 0; i < message.length; i++) {
+      let symM = message[i];
+      let symK = key[i];
+
+      if (symM.match(/[A-Z]/gm)) {
+        let addr = ((abc.length + abc.search(symM) - abc.search(symK)) % abc.length);
+        result.push(abc[addr % abc.length]);
+      } else {
+        result.push(symM);
+        key = key.slice(0, i) + symM + key.slice(i);
       }
-  
-      return this.reverse ? result : result.split('').reverse().join('');
+    }
+
+    return this.reverse ? result.join('') : result.reverse().join('');
   };
 };
 
